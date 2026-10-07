@@ -59,7 +59,7 @@ export function Timetable() {
       active = false;
     };
   }, [id]);
-  const schedule = loaded?.id === id ? loaded.schedule : null;
+  const schedule = loaded && loaded.id === id ? loaded.schedule : null;
   return (
     <section className="panel">
       <div className="eyebrow">YOUR CLASSES</div>
