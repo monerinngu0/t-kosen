@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   busData,
   dayType,
-  upcomingDepartures,
+  nearestDepartures,
   type DayType,
 } from '../shared/model';
 import { japanDate } from '../../../shared/utils/date';
@@ -23,8 +23,17 @@ export function Bus() {
 
   const date = japanDate(now);
   const type = override === 'auto' ? dayType(date) : (override as DayType);
-  const departures = busData.departures[type];
-  const upcoming = upcomingDepartures(departures, date, now, directionQuery);
+  const upcoming = nearestDepartures(
+    busData.departures,
+    date,
+    now,
+    directionQuery,
+    5,
+    override === 'auto' ? undefined : (override as DayType),
+  );
+  const todayCount = upcoming.filter(
+    (departure) => departure.serviceDate === date,
+  ).length;
   const directions = useMemo(
     () =>
       [
@@ -78,11 +87,18 @@ export function Bus() {
         </h3>
         <span>{type === 'weekday' ? '平日' : '土日祝'}</span>
       </div>
+      {todayCount === 0 && upcoming.length > 0 && (
+        <p className="bus-day-notice">
+          {directionQuery.trim()
+            ? '本日、この方面の便はありません。以下は明日の便です。'
+            : '本日の便は終了しました。以下は明日の便です。'}
+        </p>
+      )}
       {upcoming.length ? (
         <ol className="bus-list">
           {upcoming.map((departure, index) => (
             <li
-              key={`${departure.time}-${departure.stop}-${departure.direction}`}
+              key={`${departure.serviceDate}-${departure.time}-${departure.stop}-${departure.direction}`}
               className={index === 0 ? 'highlight' : ''}
             >
               <time>{departure.time}</time>
@@ -90,6 +106,9 @@ export function Bus() {
                 <strong>{departure.direction}</strong>
                 <span>{departure.stop} 発</span>
               </div>
+              {departure.serviceDate !== date && (
+                <span className="day-badge">明日</span>
+              )}
               {index === 0 && <b>次の便</b>}
             </li>
           ))}
@@ -97,8 +116,8 @@ export function Bus() {
       ) : (
         <p className="empty">
           {directionQuery.trim()
-            ? '指定した方面の本日の便はありません。'
-            : '本日の便は終了しました。'}
+            ? '指定した方面の便は今日・明日ともにありません。'
+            : '今日・明日の便はありません。'}
         </p>
       )}
     </section>

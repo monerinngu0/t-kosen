@@ -6,6 +6,7 @@ import {
 } from '../src/features/timetable/shared/model';
 import {
   dayType,
+  nearestDepartures,
   upcomingDepartures,
   type BusDeparture,
 } from '../src/features/bus/shared/model';
@@ -127,5 +128,37 @@ describe('バス', () => {
     expect(
       upcomingDepartures(departures, '2026-10-08', now, '', 1)[0].time,
     ).toBe('16:30');
+  });
+  it('今日の残りが5件未満なら明日の便で補う', () => {
+    const departures: BusDeparture[] = [
+      { time: '16:30', stop: '学校前', direction: '富山駅方面' },
+      { time: '16:45', stop: '正門前', direction: '高岡駅方面' },
+      { time: '17:20', stop: '学校前', direction: '小杉駅方面' },
+      { time: '18:10', stop: '学校前', direction: '富山駅方面' },
+      { time: '18:25', stop: '正門前', direction: '高岡駅方面' },
+      { time: '19:00', stop: '北門前', direction: '岩瀬浜方面' },
+    ];
+    const schedule = { weekday: departures, holiday: departures };
+    const now = new Date('2026-10-07T08:00:00Z');
+    const result = nearestDepartures(schedule, '2026-10-07', now);
+
+    expect(result).toHaveLength(5);
+    expect(
+      result.slice(0, 4).every((x) => x.serviceDate === '2026-10-07'),
+    ).toBe(true);
+    expect(result[4]).toMatchObject({
+      serviceDate: '2026-10-08',
+      time: '16:30',
+    });
+
+    const afterLastBus = nearestDepartures(
+      schedule,
+      '2026-10-07',
+      new Date('2026-10-07T11:00:00Z'),
+    );
+    expect(afterLastBus).toHaveLength(5);
+    expect(afterLastBus.every((x) => x.serviceDate === '2026-10-08')).toBe(
+      true,
+    );
   });
 });

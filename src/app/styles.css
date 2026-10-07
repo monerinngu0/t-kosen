@@ -289,6 +289,24 @@ footer {
   padding: 4px 9px;
   white-space: nowrap;
 }
+.bus-day-notice {
+  margin: 14px 0 0;
+  color: #657087;
+  font-size: 12px;
+}
+.bus-list .day-badge {
+  border-radius: 5px;
+  background: #fff0d8;
+  color: #79561f;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: auto;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+.bus-list .day-badge + b {
+  margin-left: 0;
+}
 .highlight {
   background: #f0f4fc;
   border-radius: 8px;
