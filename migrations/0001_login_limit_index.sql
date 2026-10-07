@@ -1,0 +1,1 @@
+CREATE INDEX `login_limit_window` ON `login_limits` (`window`);

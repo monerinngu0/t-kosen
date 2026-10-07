@@ -1,0 +1,364 @@
+:root {
+  font-family:
+    system-ui,
+    -apple-system,
+    'Noto Sans JP',
+    sans-serif;
+  color: #252e57;
+  background: #f4f5f8;
+  font-synthesis: none;
+  line-height: 1.6;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px max(22px, calc((100vw - 980px) / 2));
+  background: #fff;
+  border-bottom: 1px solid #e2e5ed;
+}
+.brand {
+  font-size: 24px;
+  font-weight: 850;
+  text-decoration: none;
+  color: inherit;
+  letter-spacing: -1px;
+}
+.brand span {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+.header-tag,
+.eyebrow {
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 2px;
+  color: #66748b;
+}
+main {
+  max-width: 980px;
+  margin: auto;
+  padding: 28px 20px 110px;
+}
+.intro {
+  margin-bottom: 30px;
+}
+.intro h1 {
+  font-size: clamp(30px, 6vw, 46px);
+  line-height: 1.4;
+  letter-spacing: 2px;
+  margin: 12px 0;
+}
+.intro p:last-child {
+  color: #6d778b;
+  font-size: 14px;
+}
+.panel {
+  background: #fff;
+  padding: 24px;
+  border-radius: 18px;
+  border: 1px solid #e3e6ee;
+  box-shadow: 0 6px 25px #252e5705;
+}
+h2 {
+  font-size: 25px;
+  margin: 6px 0 20px;
+}
+h3 {
+  font-size: 17px;
+  margin: 28px 0 12px;
+}
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+input,
+select,
+button {
+  font: inherit;
+  min-height: 44px;
+  border: 1px solid #d7dce7;
+  border-radius: 8px;
+  padding: 10px;
+  color: inherit;
+  background: white;
+  max-width: 100%;
+  min-width: 0;
+}
+input:focus-visible,
+select:focus-visible,
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #94b4e2;
+  outline-offset: 3px;
+}
+button {
+  background: #252e57;
+  color: white;
+  font-weight: 650;
+  cursor: pointer;
+  padding: 10px 18px;
+  margin-top: 12px;
+}
+button.secondary {
+  background: #f4f5f8;
+  color: #252e57;
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.controls,
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.lesson {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid #edf0f4;
+}
+.period {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 24px;
+  font-weight: 700;
+  width: 44px;
+  flex-shrink: 0;
+}
+.period small {
+  font-size: 10px;
+}
+.lesson strong {
+  font-size: 17px;
+}
+.lesson p {
+  margin: 4px 0;
+  font-size: 12px;
+  color: #6d778b;
+}
+.badge {
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 5px;
+  background: #eaf1fd;
+  color: #345b96;
+  margin-left: auto;
+  white-space: nowrap;
+}
+.cancel {
+  opacity: 0.7;
+}
+.cancel .badge {
+  background: #fce9e9;
+  color: #984141;
+}
+.extra .badge {
+  background: #e4f6ec;
+  color: #2a6f4b;
+}
+details {
+  border-top: 1px solid #e3e6ee;
+  padding: 16px 0;
+  margin-top: 18px;
+}
+summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 650;
+}
+.table-scroll {
+  overflow-x: auto;
+  margin-top: 12px;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 560px;
+  font-size: 12px;
+}
+td,
+th {
+  padding: 12px;
+  border: 1px solid #e3e6ee;
+  text-align: center;
+}
+td small {
+  display: block;
+  color: #7d8798;
+}
+.muted,
+footer {
+  color: #778297;
+  font-size: 11px;
+}
+.notice {
+  background: #fff5dd;
+  color: #755927;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.error {
+  color: #ae3030;
+}
+.empty {
+  padding: 28px 10px;
+  text-align: center;
+  color: #778297;
+  font-size: 14px;
+}
+.next-bus {
+  background: #252e57;
+  color: white;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  margin: 24px 0;
+}
+.next-bus strong {
+  font-size: 38px;
+  line-height: 1.5;
+}
+.next-bus span {
+  font-size: 12px;
+  color: #d0d7eb;
+}
+.bus-list {
+  list-style: none;
+  padding: 0;
+}
+.bus-list li {
+  padding: 14px 10px;
+  border-bottom: 1px solid #edf0f4;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.bus-list time {
+  font-size: 20px;
+  font-weight: 700;
+}
+.bus-list span {
+  font-size: 12px;
+  color: #778297;
+}
+.bus-list b {
+  font-size: 10px;
+  margin-left: auto;
+}
+.highlight {
+  background: #f0f4fc;
+  border-radius: 8px;
+}
+nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  background: #fffffff5;
+  border-top: 1px solid #e0e4ee;
+  padding: 10px 20px calc(10px + env(safe-area-inset-bottom));
+  backdrop-filter: blur(12px);
+}
+nav a {
+  width: 160px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 13px;
+  color: #7d8798;
+  padding: 12px;
+  border-radius: 8px;
+}
+nav a[aria-current] {
+  background: #edf1f9;
+  color: #252e57;
+  font-weight: 700;
+}
+footer {
+  margin-top: 24px;
+}
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 24px 0;
+}
+legend {
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.edit-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  background: #f7f8fb;
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+.edit-row button {
+  align-self: end;
+  margin: 0;
+}
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 11px;
+  max-height: 400px;
+  overflow: auto;
+}
+hr {
+  border: 0;
+  border-top: 1px solid #e3e6ee;
+  margin: 26px 0;
+}
+@media (min-width: 700px) {
+  .panel {
+    padding: 32px;
+  }
+  .edit-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .form-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 420px) {
+  .header-tag {
+    display: none;
+  }
+  .panel {
+    padding: 18px;
+  }
+  .controls {
+    grid-template-columns: 1fr;
+  }
+  .edit-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
