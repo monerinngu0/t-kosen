@@ -264,6 +264,31 @@ footer {
   font-size: 10px;
   margin-left: auto;
 }
+.bus-list div {
+  display: flex;
+  flex-direction: column;
+}
+.bus-list strong {
+  font-size: 14px;
+}
+.departure-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 22px;
+}
+.departure-heading h3 {
+  margin: 0;
+}
+.departure-heading span {
+  border-radius: 999px;
+  background: #edf1f9;
+  color: #52617a;
+  font-size: 10px;
+  padding: 4px 9px;
+  white-space: nowrap;
+}
 .highlight {
   background: #f0f4fc;
   border-radius: 8px;

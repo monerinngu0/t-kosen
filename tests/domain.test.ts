@@ -4,7 +4,11 @@ import {
   effectiveLessons,
   type Schedule,
 } from '../src/features/timetable/shared/model';
-import { dayType, nextBus } from '../src/features/bus/shared/model';
+import {
+  dayType,
+  upcomingDepartures,
+  type BusDeparture,
+} from '../src/features/bus/shared/model';
 import { japanDate } from '../src/shared/utils/date';
 const s: Schedule = {
   classId: 'I1',
@@ -97,16 +101,31 @@ describe('バス', () => {
     expect(dayType('2026-10-10')).toBe('holiday');
     expect(dayType('2026-10-12')).toBe('holiday');
   });
-  it('出発時刻・最終便後・過去・未来', () => {
+  it('全方面から近い順に5件を返し、方面で検索する', () => {
+    const departures: BusDeparture[] = [
+      { time: '18:10', stop: '学校前', direction: '富山駅方面' },
+      { time: '16:45', stop: '正門前', direction: '高岡駅方面' },
+      { time: '16:30', stop: '学校前', direction: '富山駅方面' },
+      { time: '17:20', stop: '学校前', direction: '小杉駅方面' },
+      { time: '18:25', stop: '正門前', direction: '高岡駅方面' },
+      { time: '19:00', stop: '北門前', direction: '岩瀬浜方面' },
+    ];
     const now = new Date('2026-10-07T07:30:00Z');
-    expect(nextBus(['16:30', '18:10'], '2026-10-07', now)).toBe('16:30');
     expect(
-      nextBus(['16:30', '18:10'], '2026-10-07', new Date(+now + 1000)),
-    ).toBe('18:10');
+      upcomingDepartures(departures, '2026-10-07', now).map((x) => x.time),
+    ).toEqual(['16:30', '16:45', '17:20', '18:10', '18:25']);
     expect(
-      nextBus(['16:30'], '2026-10-07', new Date('2026-10-07T10:00:00Z')),
-    ).toBeNull();
-    expect(nextBus(['16:30'], '2026-10-06', now)).toBeNull();
-    expect(nextBus(['08:00'], '2026-10-08', now)).toBe('08:00');
+      upcomingDepartures(departures, '2026-10-07', now, '高岡').map(
+        (x) => x.time,
+      ),
+    ).toEqual(['16:45', '18:25']);
+    expect(
+      upcomingDepartures(departures, '2026-10-07', new Date(+now + 1000))[0]
+        .time,
+    ).toBe('16:45');
+    expect(upcomingDepartures(departures, '2026-10-06', now)).toEqual([]);
+    expect(
+      upcomingDepartures(departures, '2026-10-08', now, '', 1)[0].time,
+    ).toBe('16:30');
   });
 });

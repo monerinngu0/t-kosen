@@ -1,35 +1,62 @@
-import { useEffect, useState } from 'react';
-import { busData, dayType, nextBus, type DayType } from '../shared/model';
+import { useEffect, useMemo, useState } from 'react';
+import {
+  busData,
+  dayType,
+  upcomingDepartures,
+  type DayType,
+} from '../shared/model';
 import { japanDate } from '../../../shared/utils/date';
 import { usePreference } from '../../../core/client/preferences';
+
 export function Bus() {
-  const [routeId, setRoute] = usePreference('route', 'toyama');
+  const [directionQuery, setDirectionQuery] = usePreference(
+    'bus-direction',
+    '',
+  );
   const [now, setNow] = useState(new Date());
   const [override, setOverride] = useState('auto');
+
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
   const date = japanDate(now);
   const type = override === 'auto' ? dayType(date) : (override as DayType);
-  const route =
-    busData.routes.find((r) => r.id === routeId) ?? busData.routes[0];
-  const next = nextBus(route[type], date, now);
+  const departures = busData.departures[type];
+  const upcoming = upcomingDepartures(departures, date, now, directionQuery);
+  const directions = useMemo(
+    () =>
+      [
+        ...new Set(
+          Object.values(busData.departures)
+            .flat()
+            .map((departure) => departure.direction),
+        ),
+      ].sort(),
+    [],
+  );
+
   return (
     <section className="panel">
-      <div className="eyebrow">GO HOME</div>
-      <h2>帰りのバス</h2>
+      <div className="eyebrow">NEXT DEPARTURES</div>
+      <h2>次のバス</h2>
       <p className="notice">{busData.notice}</p>
       <div className="controls">
         <label>
-          方面
-          <select value={route.id} onChange={(e) => setRoute(e.target.value)}>
-            {busData.routes.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.name}
-              </option>
+          方面を検索
+          <input
+            type="search"
+            list="bus-directions"
+            placeholder="例：富山、小杉"
+            value={directionQuery}
+            onChange={(e) => setDirectionQuery(e.target.value)}
+          />
+          <datalist id="bus-directions">
+            {directions.map((direction) => (
+              <option key={direction} value={direction} />
             ))}
-          </select>
+          </datalist>
         </label>
         <label>
           運行日
@@ -43,20 +70,37 @@ export function Bus() {
           </select>
         </label>
       </div>
-      <div className="next-bus">
-        <span>次のバス · {type === 'weekday' ? '平日' : '土日祝'}</span>
-        <strong>{next ?? '本日の便は終了'}</strong>
-        <span>{route.destination}行き</span>
+      <div className="departure-heading">
+        <h3>
+          {directionQuery.trim()
+            ? `「${directionQuery.trim()}」の検索結果`
+            : '全方面の直近5件'}
+        </h3>
+        <span>{type === 'weekday' ? '平日' : '土日祝'}</span>
       </div>
-      <ul className="bus-list">
-        {route[type].map((t) => (
-          <li key={t} className={t === next ? 'highlight' : ''}>
-            <time>{t}</time>
-            <span>{route.destination}行き</span>
-            {t === next && <b>次の便</b>}
-          </li>
-        ))}
-      </ul>
+      {upcoming.length ? (
+        <ol className="bus-list">
+          {upcoming.map((departure, index) => (
+            <li
+              key={`${departure.time}-${departure.stop}-${departure.direction}`}
+              className={index === 0 ? 'highlight' : ''}
+            >
+              <time>{departure.time}</time>
+              <div>
+                <strong>{departure.direction}</strong>
+                <span>{departure.stop} 発</span>
+              </div>
+              {index === 0 && <b>次の便</b>}
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="empty">
+          {directionQuery.trim()
+            ? '指定した方面の本日の便はありません。'
+            : '本日の便は終了しました。'}
+        </p>
+      )}
     </section>
   );
 }
