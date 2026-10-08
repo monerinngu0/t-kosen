@@ -38,7 +38,7 @@ function App() {
           </section>
         )}
         <footer>
-          t-kosen · クラスと路線の選択は、この端末に保存されます。
+          t-kosen · クラスとバスの検索条件は、この端末に保存されます。
         </footer>
       </main>
       <nav aria-label="メインナビゲーション">

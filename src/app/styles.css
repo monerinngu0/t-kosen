@@ -311,6 +311,156 @@ footer {
   background: #f0f4fc;
   border-radius: 8px;
 }
+.campus-search {
+  max-width: 480px;
+  margin: 24px 0;
+}
+.campus-search > label {
+  display: block;
+  margin-bottom: 7px;
+}
+.campus-search-input {
+  position: relative;
+}
+.campus-search-input > input {
+  width: 100%;
+  padding-right: 48px;
+}
+.campus-clear {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  width: 36px;
+  min-height: 36px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #657087;
+  font-size: 22px;
+}
+.room-suggestions {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 270px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+  background: white;
+  border: 1px solid #d7dce7;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px #252e5728;
+}
+.room-suggestions button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border: 0;
+  background: white;
+  color: #252e57;
+  text-align: left;
+  font-size: 14px;
+}
+.room-suggestions button:hover,
+.room-suggestions button[aria-selected='true'] {
+  background: #edf1f9;
+}
+.room-suggestions small {
+  white-space: nowrap;
+  color: #657087;
+}
+.room-no-results {
+  padding: 12px;
+  color: #657087;
+  font-size: 13px;
+}
+.floor-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 25px 0 8px;
+}
+.floor-tabs button {
+  min-width: 66px;
+  margin: 0;
+  border-radius: 999px;
+  background: #edf1f9;
+  color: #252e57;
+}
+.floor-tabs button.active {
+  background: #252e57;
+  color: white;
+}
+.campus-hint {
+  color: #657087;
+  font-size: 12px;
+}
+.floor-map-scroll {
+  overflow-x: auto;
+  border: 1px solid #dfe4ee;
+  border-radius: 14px;
+  background: #f3f6fa;
+}
+.floor-map {
+  position: relative;
+  min-width: 700px;
+  height: 370px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 99px,
+    #e7ebf2 100px
+  );
+}
+.floor-corridor {
+  position: absolute;
+  top: 43%;
+  left: 3%;
+  width: 93%;
+  height: 14%;
+  display: grid;
+  place-items: center;
+  border-top: 2px dashed #b8c2d3;
+  border-bottom: 2px dashed #b8c2d3;
+  color: #657087;
+  font-size: 12px;
+}
+.map-room {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 8px;
+  border: 2px solid #aebbd0;
+  border-radius: 9px;
+  background: #fff;
+  color: #252e57;
+  font-size: 12px;
+  text-align: center;
+}
+.map-room:hover {
+  background: #e7eefb;
+}
+.map-room.is-selected {
+  border-color: #cc7131;
+  background: #fff1dc;
+  box-shadow: 0 0 0 4px #e3a86d80;
+  color: #723e1e;
+}
+.campus-selection {
+  margin: 15px 0 0;
+  min-height: 1.6em;
+  color: #405271;
+  font-size: 13px;
+  font-weight: 600;
+}
 nav {
   position: fixed;
   bottom: 0;
