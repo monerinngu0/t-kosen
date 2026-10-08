@@ -41,7 +41,6 @@ export function CampusMap() {
 
   return (
     <section className="panel campus-panel">
-      <div className="eyebrow">CAMPUS GUIDE</div>
       <h2>構内案内</h2>
       <p className="notice">{floorPlan.notice}</p>
       <div className="campus-search">

@@ -73,6 +73,32 @@ export const scheduleSchema = z
 export type Schedule = z.infer<typeof scheduleSchema>;
 export type Lesson = z.infer<typeof lessonSchema>;
 export type Change = z.infer<typeof changeSchema>;
+export type ScheduleSummary = {
+  id: string;
+  classId: string;
+  className: string;
+  year: number;
+  term: string;
+  start: string;
+  end: string;
+  revision: number;
+};
+
+export function currentSchedule(
+  summaries: ScheduleSummary[],
+  date: string,
+  preferredId: string,
+): ScheduleSummary | undefined {
+  const active = summaries.filter(
+    (item) => item.start <= date && item.end >= date,
+  );
+  const preferred = summaries.find((item) => item.id === preferredId);
+  return (
+    active.find((item) => item.id === preferredId) ??
+    active.find((item) => item.classId === preferred?.classId) ??
+    active[0]
+  );
+}
 // AI imports can produce this same draft; only reviewed drafts use the authenticated save API.
 export type ScheduleDraft = Omit<Schedule, 'revision'>;
 export function effectiveLessons(s: Schedule, date: string) {

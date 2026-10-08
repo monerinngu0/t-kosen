@@ -107,7 +107,6 @@ export function Admin() {
   if (!authenticated)
     return (
       <section className="panel">
-        <div className="eyebrow">ADMIN</div>
         <h2>管理者ログイン</h2>
         <form onSubmit={login}>
           <label>
@@ -130,7 +129,6 @@ export function Admin() {
     <section className="panel admin">
       <div className="section-head">
         <div>
-          <div className="eyebrow">ADMIN</div>
           <h2>時間割を管理</h2>
         </div>
         <button

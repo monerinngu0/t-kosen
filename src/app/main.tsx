@@ -1,57 +1,84 @@
-import { StrictMode, useEffect, useState } from 'react';
+import { StrictMode, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { clientFeatures } from '../core/client/features';
 import './styles.css';
 function App() {
-  const [page, setPage] = useState(location.hash.slice(1) || 'timetable');
+  const [page, setPage] = useState(location.hash.slice(1) || 'home');
+  const [menuOpen, setMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
   useEffect(() => {
-    const handle = () => setPage(location.hash.slice(1) || 'timetable');
+    const handle = () => {
+      setPage(location.hash.slice(1) || 'home');
+      setMenuOpen(false);
+    };
     addEventListener('hashchange', handle);
     return () => removeEventListener('hashchange', handle);
   }, []);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const closeOutside = (event: PointerEvent) => {
+      if (!headerRef.current?.contains(event.target as Node))
+        setMenuOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false);
+    };
+    document.addEventListener('pointerdown', closeOutside);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [menuOpen]);
   const feature = clientFeatures.find((f) => f.id === page);
   const View = feature?.component;
   return (
     <>
-      <header>
-        <a className="brand" href="#timetable">
-          t-kosen<span>学校生活を、ひとつに。</span>
-        </a>
-        <span className="header-tag">CAMPUS COMPANION</span>
+      <header ref={headerRef} className="site-header">
+        <div className="header-inner">
+          <a className="brand" href="#home" onClick={() => setMenuOpen(false)}>
+            t-kosen
+          </a>
+          <button
+            type="button"
+            className="menu-toggle"
+            aria-label={menuOpen ? 'メニューを閉じる' : 'メニューを開く'}
+            aria-expanded={menuOpen}
+            aria-controls="site-menu"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <span className="menu-icon" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </span>
+          </button>
+        </div>
+        {menuOpen && (
+          <nav id="site-menu" className="site-menu" aria-label="メインメニュー">
+            {clientFeatures.map((f) => (
+              <a
+                key={f.id}
+                href={'#' + f.id}
+                aria-current={page === f.id ? 'page' : undefined}
+                onClick={() => setMenuOpen(false)}
+              >
+                {f.label}
+              </a>
+            ))}
+          </nav>
+        )}
       </header>
       <main>
-        <div className="intro">
-          <p className="eyebrow">EVERYDAY, A LITTLE EASIER</p>
-          <h1>
-            今日の授業。
-            <br />
-            帰りのバス。
-          </h1>
-          <p>必要な情報を、すぐ手元に。</p>
-        </div>
         {View ? (
           <View />
         ) : (
           <section className="panel">
             <h2>ページが見つかりません</h2>
-            <a href="#timetable">時間割へ戻る</a>
+            <a href="#home">ホームへ戻る</a>
           </section>
         )}
-        <footer>
-          t-kosen · クラスとバスの検索条件は、この端末に保存されます。
-        </footer>
       </main>
-      <nav aria-label="メインナビゲーション">
-        {clientFeatures.map((f) => (
-          <a
-            key={f.id}
-            href={'#' + f.id}
-            aria-current={page === f.id ? 'page' : undefined}
-          >
-            {f.label}
-          </a>
-        ))}
-      </nav>
     </>
   );
 }

@@ -2,7 +2,9 @@ import { describe, it, expect } from 'vitest';
 import {
   scheduleSchema,
   effectiveLessons,
+  currentSchedule,
   type Schedule,
+  type ScheduleSummary,
 } from '../src/features/timetable/shared/model';
 import {
   dayType,
@@ -32,6 +34,43 @@ const s: Schedule = {
   changes: [],
 };
 describe('時間割', () => {
+  it('ホームでは今日有効な学期の同じクラスを選ぶ', () => {
+    const previous: ScheduleSummary = {
+      id: 'I1-2026-first',
+      classId: 'I1',
+      className: '情報1年',
+      year: 2026,
+      term: 'first',
+      start: '2026-04-01',
+      end: '2026-09-30',
+      revision: 1,
+    };
+    const current = {
+      ...previous,
+      id: 'I1-2026-second',
+      term: 'second',
+      start: '2026-10-01',
+      end: '2027-03-31',
+    };
+    const other = {
+      ...current,
+      id: 'E1-2026-second',
+      classId: 'E1',
+      className: '電子1年',
+    };
+    expect(
+      currentSchedule([other, previous, current], '2026-10-08', previous.id),
+    ).toEqual(current);
+    expect(
+      currentSchedule([other, previous, current], '2026-10-08', current.id),
+    ).toEqual(current);
+    expect(
+      currentSchedule([other, previous, current], '2026-10-08', ''),
+    ).toEqual(other);
+    expect(
+      currentSchedule([previous], '2026-10-08', previous.id),
+    ).toBeUndefined();
+  });
   it('通常授業・変更・休講・週末補講を合成する', () => {
     expect(effectiveLessons(s, '2026-10-05')[0].subject).toBe('数学');
     const change = {

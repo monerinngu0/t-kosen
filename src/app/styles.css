@@ -15,51 +15,151 @@
 body {
   margin: 0;
 }
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 22px max(22px, calc((100vw - 980px) / 2));
+.site-header {
+  position: relative;
+  z-index: 20;
   background: #fff;
   border-bottom: 1px solid #e2e5ed;
 }
+.header-inner {
+  max-width: 980px;
+  margin: auto;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .brand {
-  font-size: 24px;
+  font-size: 19px;
   font-weight: 850;
   text-decoration: none;
   color: inherit;
   letter-spacing: -1px;
 }
-.brand span {
-  display: block;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 1px;
+.menu-toggle {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  margin: 0;
+  background: #fff;
+  color: #252e57;
 }
-.header-tag,
-.eyebrow {
-  font-size: 10px;
-  font-weight: 750;
-  letter-spacing: 2px;
-  color: #66748b;
+.menu-icon {
+  display: grid;
+  gap: 5px;
+}
+.menu-icon span {
+  width: 20px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+}
+.site-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-bottom: 1px solid #e2e5ed;
+  box-shadow: 0 12px 24px #252e5720;
+  padding: 6px max(20px, calc((100vw - 980px) / 2)) 12px;
+}
+.site-menu a {
+  display: block;
+  padding: 11px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #252e57;
+  font-size: 15px;
+}
+.site-menu a[aria-current],
+.site-menu a:hover {
+  background: #edf1f9;
+  font-weight: 700;
 }
 main {
   max-width: 980px;
   margin: auto;
-  padding: 28px 20px 110px;
+  padding: 16px 20px 40px;
 }
-.intro {
-  margin-bottom: 30px;
+.home-sections {
+  display: grid;
+  gap: 14px;
 }
-.intro h1 {
-  font-size: clamp(30px, 6vw, 46px);
-  line-height: 1.4;
-  letter-spacing: 2px;
-  margin: 12px 0;
+.home-section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
 }
-.intro p:last-child {
-  color: #6d778b;
+.home-section-title h2 {
+  font-size: 20px;
+  margin: 0;
+}
+.home-section-title p {
+  font-size: 12px;
+  color: #657087;
+  margin: 2px 0 0;
+}
+.home-section-title a {
+  flex-shrink: 0;
+  align-self: center;
+  color: #345b96;
+  font-size: 13px;
+  font-weight: 650;
+  text-decoration: none;
+}
+.home-section-title a:hover {
+  text-decoration: underline;
+}
+.home-lessons,
+.home-buses {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+}
+.home-lessons li,
+.home-buses li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid #edf0f4;
+  padding: 10px 0;
   font-size: 14px;
+}
+.home-period {
+  min-width: 36px;
+  color: #657087;
+}
+.home-buses time {
+  min-width: 49px;
+  font-size: 17px;
+  font-weight: 750;
+}
+.home-buses li div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.home-buses small {
+  color: #657087;
+}
+.home-buses .day-badge {
+  margin-left: auto;
+  padding: 3px 7px;
+  border-radius: 5px;
+  background: #fff0d8;
+  color: #79561f;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.home-disclaimer {
+  margin: 8px 0 0;
+  color: #657087;
+  font-size: 11px;
 }
 .panel {
   background: #fff;
@@ -203,8 +303,7 @@ td small {
   display: block;
   color: #7d8798;
 }
-.muted,
-footer {
+.muted {
   color: #778297;
   font-size: 11px;
 }
@@ -461,35 +560,6 @@ footer {
   font-size: 13px;
   font-weight: 600;
 }
-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  background: #fffffff5;
-  border-top: 1px solid #e0e4ee;
-  padding: 10px 20px calc(10px + env(safe-area-inset-bottom));
-  backdrop-filter: blur(12px);
-}
-nav a {
-  width: 160px;
-  text-align: center;
-  text-decoration: none;
-  font-size: 13px;
-  color: #7d8798;
-  padding: 12px;
-  border-radius: 8px;
-}
-nav a[aria-current] {
-  background: #edf1f9;
-  color: #252e57;
-  font-weight: 700;
-}
-footer {
-  margin-top: 24px;
-}
 .section-head {
   display: flex;
   justify-content: space-between;
@@ -542,9 +612,6 @@ hr {
   }
 }
 @media (max-width: 420px) {
-  .header-tag {
-    display: none;
-  }
   .panel {
     padding: 18px;
   }

@@ -48,7 +48,6 @@ export function Bus() {
 
   return (
     <section className="panel">
-      <div className="eyebrow">NEXT DEPARTURES</div>
       <h2>次のバス</h2>
       <p className="notice">{busData.notice}</p>
       <div className="controls">

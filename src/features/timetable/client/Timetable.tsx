@@ -62,7 +62,6 @@ export function Timetable() {
   const schedule = loaded && loaded.id === id ? loaded.schedule : null;
   return (
     <section className="panel">
-      <div className="eyebrow">YOUR CLASSES</div>
       <h2>時間割</h2>
       {error && (
         <p role="alert" className="error">
