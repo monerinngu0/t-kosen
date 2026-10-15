@@ -1,71 +1,29 @@
-import { useEffect, useState } from 'react';
-import { api } from '../../../shared/client/api';
+import { useState } from 'react';
 import { usePreference } from '../../../core/client/preferences';
 import { japanDate } from '../../../shared/utils/date';
-import { effectiveLessons, type Schedule } from '../shared/model';
-export type Summary = {
-  id: string;
-  classId: string;
-  className: string;
-  year: number;
-  term: string;
-  start: string;
-  end: string;
-  revision: number;
-};
+import { effectiveLessons } from '../shared/model';
+import { useTimetable } from './useTimetable';
 export function Timetable() {
-  const [list, setList] = useState<Summary[]>([]);
   const [selected, setSelected] = usePreference('schedule', '');
   const [date, setDate] = useState(japanDate());
-  const [loaded, setLoaded] = useState<{
-    id: string;
-    schedule: Schedule;
-  } | null>(null);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    let active = true;
-    api<Summary[]>('/timetables')
-      .then((x) => {
-        if (active) setList(x);
-      })
-      .catch((e) => {
-        if (active) setError(e.message);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
-  const id = list.some((x) => x.id === selected)
-    ? selected
-    : (list.find((x) => x.start <= date && x.end >= date)?.id ?? list[0]?.id);
-  useEffect(() => {
-    if (!id) return;
-    let active = true;
-    api<Schedule>('/timetables/' + id)
-      .then((x) => {
-        if (active) {
-          setLoaded({ id, schedule: x });
-          setError('');
-        }
-      })
-      .catch((e) => {
-        if (active) setError(e.message);
-      });
-    return () => {
-      active = false;
-    };
-  }, [id]);
-  const schedule = loaded && loaded.id === id ? loaded.schedule : null;
+  // Explicit browsing can show past semesters; initial selection follows the date.
+  const [browsingId, setBrowsingId] = useState('');
+  const { list, summary, schedule, error, loading, refresh } = useTimetable(
+    date,
+    selected,
+    browsingId,
+  );
+  const id = summary?.id;
   return (
     <section className="panel">
       <h2>時間割</h2>
+      <button className="secondary" onClick={refresh}>
+        更新
+      </button>
       {error && (
         <p role="alert" className="error">
           {error}
+          {schedule && ' 表示中の時間割は前回取得した内容です。'}
         </p>
       )}
       {loading && <p role="status">読み込み中…</p>}
@@ -79,7 +37,16 @@ export function Timetable() {
           <div className="controls">
             <label>
               クラス・学期
-              <select value={id} onChange={(e) => setSelected(e.target.value)}>
+              <select
+                value={id ?? ''}
+                onChange={(e) => {
+                  setSelected(e.target.value);
+                  setBrowsingId(e.target.value);
+                }}
+              >
+                <option value="" disabled>
+                  クラス・学期を選択してください
+                </option>
                 {list.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.className} · {s.year}年度{' '}
@@ -180,9 +147,13 @@ export function Timetable() {
                 {schedule.start}〜{schedule.end} · 更新 #{schedule.revision}
               </p>
             </>
-          ) : (
+          ) : !summary && !loading ? (
+            <p className="empty">
+              設定したクラスの選択日の時間割は未登録または学期の期間外です。クラス・学期を選択して確認できます。
+            </p>
+          ) : !error ? (
             <p role="status">時間割を読み込み中…</p>
-          )}
+          ) : null}
         </>
       )}
     </section>

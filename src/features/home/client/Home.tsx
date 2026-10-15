@@ -1,65 +1,31 @@
 import { useEffect, useState } from 'react';
-import { api } from '../../../shared/client/api';
 import { japanDate } from '../../../shared/utils/date';
 import { usePreference } from '../../../core/client/preferences';
-import {
-  currentSchedule,
-  effectiveLessons,
-  type Schedule,
-  type ScheduleSummary,
-} from '../../timetable/shared/model';
+import { effectiveLessons } from '../../timetable/shared/model';
+import { useTimetable } from '../../timetable/client/useTimetable';
 import { busData, nearestDepartures } from '../../bus/shared/model';
 
 export function Home() {
   const [now, setNow] = useState(() => new Date());
   const [preferred, setPreferred] = usePreference('schedule', '');
-  const [summaries, setSummaries] = useState<ScheduleSummary[] | null>(null);
-  const [loaded, setLoaded] = useState<{
-    id: string;
-    schedule: Schedule;
-  } | null>(null);
-  const [error, setError] = useState('');
-
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 30_000);
-    return () => clearInterval(timer);
-  }, []);
-  useEffect(() => {
-    let active = true;
-    api<ScheduleSummary[]>('/timetables')
-      .then((items) => {
-        if (active) setSummaries(items);
-      })
-      .catch((cause: Error) => {
-        if (active) setError(cause.message);
-      });
+    const updateClock = () => setNow(new Date());
+    window.addEventListener('focus', updateClock);
+    document.addEventListener('visibilitychange', updateClock);
     return () => {
-      active = false;
+      clearInterval(timer);
+      window.removeEventListener('focus', updateClock);
+      document.removeEventListener('visibilitychange', updateClock);
     };
   }, []);
 
   const date = japanDate(now);
-  const summary = currentSchedule(summaries ?? [], date, preferred);
+  const { summary, schedule, error, loading, refresh } = useTimetable(
+    date,
+    preferred,
+  );
   const scheduleId = summary?.id;
-  useEffect(() => {
-    if (!scheduleId) return;
-    let active = true;
-    api<Schedule>('/timetables/' + scheduleId)
-      .then((schedule) => {
-        if (active) {
-          setLoaded({ id: scheduleId, schedule });
-          setError('');
-        }
-      })
-      .catch((cause: Error) => {
-        if (active) setError(cause.message);
-      });
-    return () => {
-      active = false;
-    };
-  }, [scheduleId]);
-
-  const schedule = loaded && loaded.id === scheduleId ? loaded.schedule : null;
   const lessons = schedule ? effectiveLessons(schedule, date) : [];
   const buses = nearestDepartures(busData.departures, date, now);
 
@@ -88,9 +54,16 @@ export function Home() {
             {error}
           </p>
         )}
-        {!error && summaries === null && <p role="status">読み込み中…</p>}
-        {!error && summaries !== null && !summary && (
-          <p className="empty">今日の時間割はありません。</p>
+        <button className="secondary" onClick={refresh}>
+          更新
+        </button>
+        {!error && loading && <p role="status">読み込み中…</p>}
+        {!error && !loading && !summary && (
+          <p className="empty">
+            {preferred
+              ? '設定したクラスの今日の時間割は未登録または学期の期間外です。'
+              : '今日の時間割はありません。'}
+          </p>
         )}
         {!error && summary && !schedule && (
           <p role="status">授業を読み込み中…</p>
