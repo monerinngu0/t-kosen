@@ -1,6 +1,6 @@
 import { StrictMode, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { clientFeatures } from '../core/client/features';
+import { clientFeatures } from './client/features';
 import './styles.css';
 function App() {
   const [page, setPage] = useState(location.hash.slice(1) || 'home');

@@ -52,9 +52,11 @@ pnpm exec wrangler dev # ビルド済みの静的画面も含めて確認
 ```text
 src/
   app/                      # 画面の組み立て、Workerエントリ、CSS
+    client/features.ts      # 画面・ナビゲーションの登録
+    server/features.ts      # APIルートの登録
   core/
-    client/                 # 画面登録・端末設定
-    server/                 # 認証、Env、API登録、認証用DBスキーマ
+    client/                 # 端末設定
+    server/                 # 認証、Env、認証用DBスキーマ
   features/
     home/
       client/               # 今日の授業と次の5便の概要
@@ -75,7 +77,22 @@ migrations/                 # SQL + Drizzleのスナップショット
 scripts/seed.sql            # ローカル用サンプル
 ```
 
-新しい機能は `features/<name>/client`, `server`, `shared` の必要な部分を作り、`core/client/features.ts` と `core/server/features.ts` に登録します。バスのようにAPI不要ならserverは不要です。汎用プラグイン機構やDIコンテナは導入していません。機能固有の処理をcoreに置かず、複数機能で共通なものだけsharedへ移します。
+新しい機能は `features/<name>/client`, `server`, `shared` の必要な部分を作り、`app/client/features.ts` と `app/server/features.ts` に登録します。バスのようにAPI不要ならserverは不要です。汎用プラグイン機構やDIコンテナは導入していません。機能固有の処理はその機能に置き、機能の知識を持たない汎用処理だけsharedへ移します。他機能から再利用する業務処理は、元の機能の公開入口から提供します。
+
+依存方向は `pnpm lint`（`pnpm check`とCIにも含む）の `architecture/boundaries` で検査します。ルール本体は `scripts/eslint/architecture.js` にあり、新しい機能名を追加するための設定変更は不要です。
+
+| 参照元   | 許可する参照先                                       |
+| -------- | ---------------------------------------------------- |
+| app      | core・features・shared。機能の組み合わせと登録を担当 |
+| core     | core・shared。appやfeaturesには依存しない            |
+| features | core・shared・同じ機能の内部。他機能は公開入口のみ   |
+| shared   | shared。app・core・featuresには依存しない            |
+
+clientからserver、serverからclientへの参照は禁止です。shared領域（`features/*/shared`や`shared/utils`など）はclient/serverのどちらにも依存しません。`app/main.tsx`はclient、`app/worker.ts`はserverとして扱います。型だけのimportも同じルールに従い、両側で使う型はsharedに置きます。
+
+他機能が使う型・関数・Hookは、必要なものだけ `features/<name>/<client|server|shared>/index.ts` からexportします。例えばHomeは `../../timetable/client` からHookを参照し、`../../timetable/client/useTimetable` のような内部ファイルへの直接参照はできません。同じ機能の内部では直接参照でき、appは組み立てのため内部参照も可能です。client/server/sharedを混ぜた単一の公開入口は作りません。
+
+検査は通常のimport・再export・動的import・TypeScriptのimport型・requireに適用します。動的に組み立てたモジュールパスは禁止です。現在のローカル参照は相対パスのみを想定しており、パスエイリアスを導入する場合はルールの解決処理とテストも更新してください。この検査は依存方向と公開入口を対象とし、機能間の循環依存の検出は行いません。
 
 複数人で作業する際は機能ごとにブランチを切り、PRでCIを確認してください。ルート登録とDB変更が重なる場合は先に合意してください。
 

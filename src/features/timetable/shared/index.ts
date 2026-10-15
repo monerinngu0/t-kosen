@@ -1,0 +1,1 @@
+export { effectiveLessons } from './model';
