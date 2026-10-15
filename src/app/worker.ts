@@ -3,7 +3,7 @@ import { bodyLimit } from 'hono/body-limit';
 import { secureHeaders } from 'hono/secure-headers';
 import type { Env } from '../core/server/env';
 import { authRoutes } from '../core/server/auth';
-import { serverFeatures } from '../core/server/features';
+import { serverFeatures } from './server/features';
 export const app = new Hono<Env>();
 app.use('*', secureHeaders());
 app.use(

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { japanDate } from '../../../shared/utils/date';
 import { usePreference } from '../../../core/client/preferences';
-import { effectiveLessons } from '../../timetable/shared/model';
-import { useTimetable } from '../../timetable/client/useTimetable';
-import { busData, nearestDepartures } from '../../bus/shared/model';
+import { effectiveLessons } from '../../timetable/shared';
+import { useTimetable } from '../../timetable/client';
+import { busData, nearestDepartures } from '../../bus/shared';
 
 export function Home() {
   const [now, setNow] = useState(() => new Date());
