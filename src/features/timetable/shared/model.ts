@@ -92,11 +92,12 @@ export function currentSchedule(
   const active = summaries.filter(
     (item) => item.start <= date && item.end >= date,
   );
+  if (!preferredId) return active[0];
   const preferred = summaries.find((item) => item.id === preferredId);
+  // A missing or inactive preference must never silently select another class.
   return (
     active.find((item) => item.id === preferredId) ??
-    active.find((item) => item.classId === preferred?.classId) ??
-    active[0]
+    active.find((item) => item.classId === preferred?.classId)
   );
 }
 // AI imports can produce this same draft; only reviewed drafts use the authenticated save API.

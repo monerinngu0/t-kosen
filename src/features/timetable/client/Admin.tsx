@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { api } from '../../../shared/client/api';
 import { japanDate } from '../../../shared/utils/date';
 import { scheduleSchema, type Schedule } from '../shared/model';
-import type { Summary } from './Timetable';
+import type { ScheduleSummary } from '../shared/model';
 const initial = (): Schedule => {
   const y = Number(japanDate().slice(0, 4));
   return {
@@ -28,7 +28,7 @@ export function Admin() {
   const [authenticated, setAuth] = useState(false);
   const [checking, setChecking] = useState(true);
   const [password, setPassword] = useState('');
-  const [list, setList] = useState<Summary[]>([]);
+  const [list, setList] = useState<ScheduleSummary[]>([]);
   const [draft, setDraft] = useState<Schedule>(initial);
   const [history, setHistory] = useState<History[]>([]);
   const [message, setMessage] = useState('');
@@ -41,7 +41,7 @@ export function Admin() {
   }, []);
   useEffect(() => {
     if (authenticated)
-      api<Summary[]>('/timetables')
+      api<ScheduleSummary[]>('/timetables', { cache: 'no-store' })
         .then(setList)
         .catch((e) => setMessage(e.message));
   }, [authenticated]);
@@ -66,7 +66,7 @@ export function Admin() {
     setBusy(true);
     setMessage('');
     try {
-      const s = await api<Schedule>('/timetables/' + id);
+      const s = await api<Schedule>('/timetables/' + id, { cache: 'no-store' });
       setDraft(s);
       setHistory(await api<History[]>('/timetables/' + id + '/history'));
     } catch (e) {
@@ -89,9 +89,13 @@ export function Admin() {
         body: JSON.stringify(valid.data),
       });
       setDraft(saved);
-      setList(await api<Summary[]>('/timetables'));
+      setList(
+        await api<ScheduleSummary[]>('/timetables', { cache: 'no-store' }),
+      );
       setHistory(await api<History[]>('/timetables/' + saved.id + '/history'));
-      setMessage('保存しました。学生画面への反映には最大30秒かかります。');
+      setMessage(
+        '保存しました。表示中の学生画面は30秒ごと、画面に戻ったときにも更新します。',
+      );
     } catch (e) {
       setMessage((e as Error).message);
     } finally {
